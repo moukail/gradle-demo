@@ -1,0 +1,11 @@
+version: '3.9'
+
+services:
+  app:
+    user: root
+    build:
+      context: .docker
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/var/www
+    tty: true
