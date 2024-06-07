@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+if [ -d ".docker" ]; then
+  echo "docker exists"
+  exit
+fi
+
 mkdir .docker
 cat << EOF > ./.docker/Dockerfile
 FROM amazoncorretto:17-alpine3.19
@@ -30,7 +35,8 @@ gradle init \
   --project-name my-project  \
   --no-split-project  \
   --java-version 17  <<< 'no'
-  
+
+chmod a+rw -R ./
 EOF
 
 cat << EOF > ./.docker/docker-init.sh
@@ -46,6 +52,8 @@ fi
 
 gradle build
 gradle run
+
+chmod a+rw -R ./
 
 tail -f /dev/null
 EOF
@@ -64,8 +72,16 @@ services:
     tty: true
 EOF
 
+### Docker
+docker compose up -d --build
+docker logs demo-app-1
+
 ### Git
-rm -rf .git
+if [ -d ".git" ]; then
+  echo "git exists"
+  exit
+fi
+
 git init
 git add init-docker-project.sh
 git commit -m "init docker script"
@@ -73,7 +89,4 @@ git commit -m "init docker script"
 git add .docker docker-compose.yml
 git commit -m "add docker setup"
 
-### Docker
-docker compose up -d --build
-docker logs demo-app-1
-docker exec -it demo-app-1 bash
+#docker exec -it demo-app-1 bash
