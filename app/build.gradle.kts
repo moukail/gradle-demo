@@ -44,3 +44,11 @@ tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
+
+task("test_cli"){
+	println("---------- test cli -------------")
+	exec(){
+		workingDir("./")
+		commandLine("ls", "-hal")
+	}
+}
